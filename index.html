@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genetic Variant Lookup</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-dna" viewBox="0 0 16 16" style="margin-right: 8px; vertical-align: text-bottom;">
+                  <path fill-rule="evenodd" d="M3.5 1.5A.5.5 0 0 1 4 1h8a.5.5 0 0 1 .5.5v14a.5.5 0 0 1-.5.5H4a.5.5 0 0 1-.5-.5zM4 2v.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V2zm0 1.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm.5 1a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5zM4 8v.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V8zm0 1.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm.5 1a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5z"/>
+                </svg>
+                Genetic Variant Lookup
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Search for a Genetic Variant</h4>
+                <form id="variant-form">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-5">
+                            <label for="gene-selector" class="form-label">1. Select a Gene</label>
+                            <!-- The select box will be populated by JavaScript -->
+                            <select class="form-select" id="gene-selector" data-placeholder="Type to search for a gene...">
+                                <option></option> <!-- Required for placeholder -->
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="variant-input" class="form-label">2. Enter Variant ID (rs, HGVS, etc.)</label>
+                            <input type="text" class="form-control" id="variant-input" placeholder="e.g., rs1799950">
+                        </div>
+                        <div class="col-md-2">
+                             <button type="submit" class="btn btn-primary w-100">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Results will be displayed here -->
+        <div id="results-container" class="mt-4">
+            <!-- This content is shown before any search is made -->
+            <div class="text-center p-5 bg-light rounded">
+                <p class="lead text-muted">Variant details will be displayed here once a search is performed.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <!-- Your Application Logic -->
+    <script src="app.js"></script>
+
+</body>
+</html>
