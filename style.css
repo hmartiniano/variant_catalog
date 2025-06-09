@@ -12,6 +12,25 @@ body {
     animation: fadeIn 0.5s; /* A simple fade-in animation */
 }
 
+/* Specific styling for the new description list for better spacing */
+.variant-details-list dt {
+    font-weight: 500;
+}
+.variant-details-list dd {
+    margin-bottom: 0.5rem;
+}
+
+/* Style for the functional studies table */
+.studies-table {
+    font-size: 0.9rem;
+}
+
+/* Highlighting for important studies, using a Bootstrap color variable */
+.studies-table .table-highlight {
+    background-color: var(--bs-primary-bg-subtle) !important;
+    font-weight: 500;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
