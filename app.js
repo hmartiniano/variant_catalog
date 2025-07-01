@@ -1,3 +1,10 @@
+// --- CONSTANTS ---
+const ACMG_CLASSIFICATION_FIELD = "ACMG Classification";
+const CURATED_BY_FH_VCEP_FIELD = "Curated by FH VCEP?";
+const BADGE_SUCCESS_CLASS = "bg-success";
+const BADGE_DANGER_CLASS = "bg-danger";
+const N_A = 'N/A';
+
 // --- DISPLAY CONFIGURATION ---
 const displayConfig = {
     "summaryFields": [
@@ -105,6 +112,13 @@ $(document).ready(function() {
         });
 });
 
+/**
+ * A generator function to search for a variant within a gene.
+ * It yields the first matching variant found.
+ * @param {string} gene - The gene to search within.
+ * @param {string} searchTerm - The search term (variant ID).
+ * @yields {object|null} The matching variant object or null if not found.
+ */
 function* searchGenerator(gene, searchTerm) {
     const geneInfo = geneData[gene];
     if (!geneInfo) { yield null; return; }
@@ -120,6 +134,11 @@ function* searchGenerator(gene, searchTerm) {
     yield null;
 }
 
+/**
+ * Searches for a variant within a specified gene and displays its data.
+ * @param {string} gene - The gene to search within.
+ * @param {string} variantId - The ID of the variant to search for.
+ */
 function searchAndDisplay(gene, variantId) {
     const searchTerm = variantId.trim().toLowerCase();
     const searchResult = searchGenerator(gene, searchTerm).next().value;
@@ -130,37 +149,13 @@ function searchAndDisplay(gene, variantId) {
     }
 }
 
+/**
+ * Displays the variant data in the results container.
+ * @param {object} variant - The variant object to display.
+ */
 function displayVariantData(variant) {
-    const summaryHtml = displayConfig.summaryFields.map(field => {
-        const value = variant[field.key] || 'N/A';
-        const tooltip = displayConfig.tooltips[field.key] || '';
-        let valueHtml = `<strong>${field.label}:</strong> ${value}`;
-        if (field.key === "ACMG Classification") {
-            const acmgClass = getAcmgHighlightClass(value);
-            valueHtml = `<strong>${field.label}:</strong> <span class="badge ${acmgClass}">${value}</span>`;
-        } else if (field.key === "Curated by FH VCEP?") {
-            const vcepValue = variant[field.key];
-            if (vcepValue) {
-                const vcepValueLower = String(vcepValue).toLowerCase();
-                const badgeClass = vcepValueLower === 'yes' ? 'bg-success' : 'bg-danger';
-                valueHtml = `<strong>${field.label}:</strong> <span class="badge ${badgeClass}">${vcepValue}</span>`;
-            }
-        }
-        return `<div class="summary-item" data-bs-toggle="tooltip" title="${tooltip}">${valueHtml}</div>`;
-    }).join('');
-
-    const hiddenDetailsHtml = displayConfig.hiddenFields.map(key => {
-        const tooltip = displayConfig.tooltips[key] || '';
-        if (key === "Curated by FH VCEP?") {
-            const vcepValue = variant[key];
-            if (!vcepValue) return '';
-            const vcepValueLower = String(vcepValue).toLowerCase();
-            const badgeClass = vcepValueLower === 'yes' ? 'bg-success' : 'bg-danger';
-            return generateFieldHtml(key, `<span class="badge ${badgeClass}">${vcepValue}</span>`, tooltip);
-        }
-        return generateFieldHtml(key, variant[key], tooltip);
-    }).join('');
-
+    const summaryHtml = _generateSummaryHtml(variant);
+    const hiddenDetailsHtml = _generateHiddenDetailsHtml(variant);
     const studiesTableHtml = generateStudiesTable(variant);
 
     const html = `
@@ -181,6 +176,51 @@ function displayVariantData(variant) {
     $('#results-container').html(html);
 }
 
+/**
+ * Generates the HTML for the summary section of a variant.
+ * @param {object} variant - The variant object.
+ * @returns {string} The HTML string for the summary section.
+ */
+function _generateSummaryHtml(variant) {
+    return displayConfig.summaryFields.map(field => {
+        const value = variant[field.key] || N_A;
+        const tooltip = displayConfig.tooltips[field.key] || '';
+        let valueHtml = `<strong>${field.label}:</strong> ${value}`;
+
+        if (field.key === ACMG_CLASSIFICATION_FIELD) {
+            const acmgClass = getAcmgHighlightClass(value);
+            valueHtml = `<strong>${field.label}:</strong> <span class="badge ${acmgClass}">${value}</span>`;
+        } else if (field.key === CURATED_BY_FH_VCEP_FIELD) {
+            const vcepValue = variant[field.key];
+            if (vcepValue) {
+                const vcepValueLower = String(vcepValue).toLowerCase();
+                const badgeClass = vcepValueLower === 'yes' ? BADGE_SUCCESS_CLASS : BADGE_DANGER_CLASS;
+                valueHtml = `<strong>${field.label}:</strong> <span class="badge ${badgeClass}">${vcepValue}</span>`;
+            }
+        }
+        return `<div class="summary-item" data-bs-toggle="tooltip" title="${tooltip}">${valueHtml}</div>`;
+    }).join('');
+}
+
+/**
+ * Generates the HTML for the hidden details section of a variant.
+ * @param {object} variant - The variant object.
+ * @returns {string} The HTML string for the hidden details section.
+ */
+function _generateHiddenDetailsHtml(variant) {
+    return displayConfig.hiddenFields.map(key => {
+        const tooltip = displayConfig.tooltips[key] || '';
+        if (key === CURATED_BY_FH_VCEP_FIELD) {
+            const vcepValue = variant[key];
+            if (!vcepValue) return '';
+            const vcepValueLower = String(vcepValue).toLowerCase();
+            const badgeClass = vcepValueLower === 'yes' ? BADGE_SUCCESS_CLASS : BADGE_DANGER_CLASS;
+            return generateFieldHtml(key, vcepValue, tooltip, badgeClass);
+        }
+        return generateFieldHtml(key, variant[key], tooltip);
+    }).join('');
+}
+
 function getAcmgHighlightClass(acmgValue) {
     if (!acmgValue) return 'bg-secondary';
     const lowerAcmgValue = acmgValue.toLowerCase();
@@ -190,11 +230,28 @@ function getAcmgHighlightClass(acmgValue) {
     return 'bg-secondary';
 }
 
-function generateFieldHtml(label, value, tooltipText) {
+/**
+ * Generates the HTML for a single field (label and value).
+ * @param {string} label - The label for the field.
+ * @param {string} value - The value of the field.
+ * @param {string} tooltipText - The tooltip text for the field.
+ * @param {string} [badgeClass] - Optional CSS class for a badge if the value should be displayed as a badge.
+ * @returns {string} The HTML string for the field.
+ */
+function generateFieldHtml(label, value, tooltipText, badgeClass) {
     const tooltip = tooltipText ? `data-bs-toggle="tooltip" data-bs-placement="top" title="${tooltipText}"` : "";
-    return `<dt class="col-sm-4" ${tooltip}>${label}</dt><dd class="col-sm-8">${value || 'N/A'}</dd>`;
+    let displayValue = value || N_A;
+    if (badgeClass) {
+        displayValue = `<span class="badge ${badgeClass}">${value}</span>`;
+    }
+    return `<dt class="col-sm-4" ${tooltip}>${label}</dt><dd class="col-sm-8">${displayValue}</dd>`;
 }
 
+/**
+ * Generates the HTML table for functional studies.
+ * @param {object} variant - The variant object containing study data.
+ * @returns {string} The HTML string for the studies table.
+ */
 function generateStudiesTable(variant) {
     const studies = [];
     let i = 1;
@@ -219,5 +276,14 @@ function generateStudiesTable(variant) {
     return `<h5 class="mt-4">Functional Studies</h5><div class="table-responsive"><table class="table table-bordered">${header}<tbody>${rows}</tbody></table></div>`;
 }
 
+/**
+ * Displays a "not found" message in the results container.
+ * @param {string} message - The message to display.
+ */
 function displayNotFound(message) { $('#results-container').html(`<div class="alert alert-warning">${message}</div>`); }
+
+/**
+ * Displays an error message in the results container.
+ * @param {string} message - The message to display.
+ */
 function displayError(message) { $('#results-container').html(`<div class="alert alert-danger">${message}</div>`); }
