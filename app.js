@@ -1,6 +1,4 @@
 // --- CONSTANTS ---
-const ACMG_CLASSIFICATION_FIELD = "ACMG Classification";
-const CURATED_BY_FH_VCEP_FIELD = "Curated by FH VCEP?";
 const BADGE_SUCCESS_CLASS = "bg-success";
 const BADGE_DANGER_CLASS = "bg-danger";
 const N_A = 'N/A';
@@ -187,10 +185,10 @@ function _generateSummaryHtml(variant) {
         const tooltip = displayConfig.tooltips[field.key] || '';
         let valueHtml = `<strong>${field.label}:</strong> ${value}`;
 
-        if (field.key === ACMG_CLASSIFICATION_FIELD) {
+        if (field.key === "ACMG Classification") {
             const acmgClass = getAcmgHighlightClass(value);
             valueHtml = `<strong>${field.label}:</strong> <span class="badge ${acmgClass}">${value}</span>`;
-        } else if (field.key === CURATED_BY_FH_VCEP_FIELD) {
+        } else if (field.key === "Curated by FH VCEP?") {
             const vcepValue = variant[field.key];
             if (vcepValue) {
                 const vcepValueLower = String(vcepValue).toLowerCase();
@@ -210,7 +208,7 @@ function _generateSummaryHtml(variant) {
 function _generateHiddenDetailsHtml(variant) {
     return displayConfig.hiddenFields.map(key => {
         const tooltip = displayConfig.tooltips[key] || '';
-        if (key === CURATED_BY_FH_VCEP_FIELD) {
+        if (key === "Curated by FH VCEP?") {
             const vcepValue = variant[key];
             if (!vcepValue) return '';
             const vcepValueLower = String(vcepValue).toLowerCase();
