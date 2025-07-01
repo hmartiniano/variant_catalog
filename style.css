@@ -67,3 +67,36 @@ body {
 .toggle-icon.expanded {
     transform: rotate(180deg);
 }
+
+/* ACMG Classification Highlighting */
+.acmg-pathogenic {
+    background-color: #dc3545;
+    color: white;
+}
+
+.acmg-likely-pathogenic {
+    background-color: #dc3545;
+    opacity: 0.75;
+    color: white;
+}
+
+.acmg-vus {
+    background-color: #ffc107;
+    color: black;
+}
+
+.acmg-likely-benign {
+    background-color: #198754;
+    opacity: 0.75;
+    color: white;
+}
+
+.acmg-benign {
+    background-color: #198754;
+    color: white;
+}
+
+.acmg-conflicting {
+    background-color: #0dcaf0;
+    color: black;
+}

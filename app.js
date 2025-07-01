@@ -27,12 +27,12 @@ const displayConfig = {
         "pmid": "PMID"
     },
     "acmgHighlighting": {
-        "pathogenic": "bg-danger",
-        "likely pathogenic": "bg-danger bg-opacity-75",
-        "vus": "bg-warning text-dark",
-        "likely benign": "bg-success bg-opacity-75",
-        "benign": "bg-success",
-        "conflicting": "bg-info text-dark"
+        "pathogenic": "acmg-pathogenic",
+        "likely pathogenic": "acmg-likely-pathogenic",
+        "vus": "acmg-vus",
+        "likely benign": "acmg-likely-benign",
+        "benign": "acmg-benign",
+        "conflicting": "acmg-conflicting"
     },
     "tooltips": {
         "variant code": "variant code",
@@ -75,39 +75,35 @@ $(document).ready(function() {
         .then(data => {
             console.log("Data fetched successfully. Initializing application.");
             geneData = data;
-            initializeApp();
+            const $geneSelector = $('#gene-selector');
+            const $variantForm = $('#variant-form');
+            const $variantInput = $('#variant-input');
+            
+            const genes = Object.keys(geneData).sort();
+            $geneSelector.empty(); // Clear any previous options
+            genes.forEach(gene => {
+                $geneSelector.append(new Option(gene, gene));
+            });
+
+            $geneSelector.select2({ theme: "bootstrap-5", width: '100%' });
+            $('body').tooltip({ selector: '[data-bs-toggle="tooltip"]' });
+
+            $variantForm.on('submit', function(e) {
+                e.preventDefault();
+                searchAndDisplay($geneSelector.val(), $variantInput.val());
+            });
+
+            $('#results-container').on('click', '.results-summary', function() {
+                $(this).siblings('.results-details').slideToggle('fast');
+                $(this).find('.toggle-icon').toggleClass('expanded');
+            });
+            console.log("Application initialized.");
         })
         .catch(error => {
             console.error("Fatal Error: Could not fetch or parse data.json.", error);
             displayError("Could not load variant data. Please check that 'data.json' exists and is correctly formatted.");
         });
 });
-
-function initializeApp() {
-    const $geneSelector = $('#gene-selector');
-    const $variantForm = $('#variant-form');
-    const $variantInput = $('#variant-input');
-    
-    const genes = Object.keys(geneData).sort();
-    $geneSelector.empty(); // Clear any previous options
-    genes.forEach(gene => {
-        $geneSelector.append(new Option(gene, gene));
-    });
-
-    $geneSelector.select2({ theme: "bootstrap-5", width: '100%' });
-    $('body').tooltip({ selector: '[data-bs-toggle="tooltip"]' });
-
-    $variantForm.on('submit', function(e) {
-        e.preventDefault();
-        searchAndDisplay($geneSelector.val(), $variantInput.val());
-    });
-
-    $('#results-container').on('click', '.results-summary', function() {
-        $(this).siblings('.results-details').slideToggle('fast');
-        $(this).find('.toggle-icon').toggleClass('expanded');
-    });
-    console.log("Application initialized.");
-}
 
 function* searchGenerator(gene, searchTerm) {
     const geneInfo = geneData[gene];
@@ -142,6 +138,13 @@ function displayVariantData(variant) {
         if (field.key === "ACMG Classification") {
             const acmgClass = getAcmgHighlightClass(value);
             valueHtml = `<strong>${field.label}:</strong> <span class="badge ${acmgClass}">${value}</span>`;
+        } else if (field.key === "Curated by FH VCEP?") {
+            const vcepValue = variant[field.key];
+            if (vcepValue) {
+                const vcepValueLower = String(vcepValue).toLowerCase();
+                const badgeClass = vcepValueLower === 'yes' ? 'bg-success' : 'bg-danger';
+                valueHtml = `<strong>${field.label}:</strong> <span class="badge ${badgeClass}">${vcepValue}</span>`;
+            }
         }
         return `<div class="summary-item" data-bs-toggle="tooltip" title="${tooltip}">${valueHtml}</div>`;
     }).join('');
@@ -153,8 +156,7 @@ function displayVariantData(variant) {
             if (!vcepValue) return '';
             const vcepValueLower = String(vcepValue).toLowerCase();
             const badgeClass = vcepValueLower === 'yes' ? 'bg-success' : 'bg-danger';
-            const icon = vcepValueLower === 'yes' ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shield-fill-check" viewBox="0 0 16 16" style="vertical-align: -0.125em; margin-left: 0.5rem;"><path d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.725 10.725 0 0 0 2.287 2.233c.346.244.652.42.893.533.12.056.255.098.386.123.134.026.275.04.415.04.14 0 .281-.014.415-.04.13-.025.266-.067.386-.123.24-.113.547-.29.893-.533a10.726 10.726 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.5 1 8 1c-.5 0-1.552.29-2.662.59zM10.854 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 8.793l2.646-2.647a.5.5 0 0 1 .708 0z"/></svg>` : '';
-            return generateFieldHtml(key, `<span class="badge ${badgeClass}">${vcepValue}</span>${icon}`, tooltip);
+            return generateFieldHtml(key, `<span class="badge ${badgeClass}">${vcepValue}</span>`, tooltip);
         }
         return generateFieldHtml(key, variant[key], tooltip);
     }).join('');
