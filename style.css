@@ -4,6 +4,7 @@ body {
 
 .card {
     border: none; /* Removes the default card border for a cleaner look */
+    margin-bottom: 20px; /* Add margin below cards */
 }
 
 /* Custom styling for the results card to make it stand out */
