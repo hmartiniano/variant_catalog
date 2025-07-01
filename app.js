@@ -1,232 +1,221 @@
-// This is your updated data source.
-// Note the new `p_notation` and `aliases` fields within each variant object.
-const geneData = {
-    "LDLR": {
-        "fullName": "Low Density Lipoprotein Receptor",
-        "chromosome": "19p13.2",
-        "summary": "Encodes the receptor for low-density lipoprotein (LDL), which is responsible for clearing LDL ('bad cholesterol') from the bloodstream. Mutations cause Familial Hypercholesterolemia (FH).",
-        "variants": [
-            {
-                "id": "rs121908028",
-                "hgvs": "c.1060+10G>A",
-                "p_notation": "p.(?)", // Splicing variant, protein effect is complex
-                "aliases": ["FH-Toulouse"],
-                "location": "chr19:11223940-11223940",
-                "variantType": "SNV",
-                "clinvarId": "12345",
-                "clinicalSignificance": "Pathogenic",
-                "fhVcepEvidenceCodes": "PS3, PM2, PP4",
-                "classificationDate": "2023-05-18",
-                "isFhVcepCurated": true,
-                "functionalStudies": [
-                    {
-                        "studyType": "Splicing Assay",
-                        "result": "Leads to exon 7 skipping, resulting in a truncated, non-functional protein.",
-                        "author": "Sun",
-                        "year": 2021,
-                        "pubmedId": "33998810",
-                        "isHighlighted": true
-                    }
-                ]
-            },
-            {
-                "id": "rs28942082",
-                "hgvs": "c.1774G>A",
-                "p_notation": "p.Cys592Tyr",
-                "aliases": [],
-                "location": "chr19:11234567-11234567",
-                "variantType": "SNV",
-                "clinvarId": "67890",
-                "clinicalSignificance": "Benign",
-                "fhVcepEvidenceCodes": "BA1, BS2",
-                "classificationDate": "2022-11-01",
-                "isFhVcepCurated": true,
-                "functionalStudies": []
-            }
-        ]
+// --- DISPLAY CONFIGURATION ---
+const displayConfig = {
+    "summaryFields": [
+        "variant code",
+        "Gene",
+        "c.",
+        "p.",
+        "Has functional study?",
+        "ACMG Classification",
+        "Curated by FH VCEP?"
+    ].map(key => ({ key: key, label: key })),
+    "hiddenFields": [
+        "Location",
+        "Variant type",
+        "Allele type",
+        "ClinVar ID",
+        "ClinGen Allele Registry ID",
+        "FH VCEP evidence codes",
+        "Date of classification",
+        "Curated by",
+        "studied in PerMedFH?"
+    ],
+    "studyFields": {
+        "type": "Type of functional study (sample type, assay)",
+        "result": "Result of functional study",
+        "author": "Authors",
+        "pmid": "PMID"
     },
-    "BRCA1": {
-        "fullName": "Breast Cancer Gene 1",
-        "chromosome": "17q21.31",
-        "summary": "Associated with hereditary breast and ovarian cancer. Mutations significantly increase the risk of developing these cancers.",
-        "variants": [
-            {
-                "id": "185delAG",
-                "hgvs": "c.68_69delAG",
-                "p_notation": "p.Gln23fs",
-                "aliases": ["HBOC_Founder_1"],
-                "location": "chr17:43125342-43125343",
-                "variantType": "Indel",
-                "clinvarId": "9342",
-                "clinicalSignificance": "Pathogenic",
-                "fhVcepEvidenceCodes": "N/A",
-                "classificationDate": "2021-01-15",
-                "isFhVcepCurated": false,
-                "functionalStudies": [
-                    {
-                        "studyType": "Protein Truncation Test",
-                        "result": "Confirms the production of a truncated protein.",
-                        "author": "Friedman",
-                        "year": 1994,
-                        "pubmedId": "7989345",
-                        "isHighlighted": true
-                    }
-                ]
-            }
-        ]
+    "acmgHighlighting": {
+        "pathogenic": "bg-danger",
+        "likely pathogenic": "bg-danger bg-opacity-75",
+        "vus": "bg-warning text-dark",
+        "likely benign": "bg-success bg-opacity-75",
+        "benign": "bg-success",
+        "conflicting": "bg-info text-dark"
+    },
+    "tooltips": {
+        "variant code": "variant code",
+        "Gene": "Reference sequences used were: APOB: NM_000384.3, LDLR: NM_000527.5, PCSK9: NM_174936.4",
+        "c.": "Variant at the DNA level",
+        "p.": "Variant at protein level",
+        "Has functional study?": "Yes - published functional study. Under review - please check back later, as information is being updated. Ongoing - Variant is currently being studied functionally, please come back later for updates.",
+        "ACMG Classification": "Variant classification according to the latest approved ACMG guidelines, with specifications for each gene by the ClinGen FH Variant Curation Expert Panel (More details here: https://clinicalgenome.org/affiliation/50004/)",
+        "Curated by FH VCEP?": "If the variant was classified by the ClinGen FH VCEP (https://clinicalgenome.org/affiliation/50004/)",
+        "Location": "Location in the gene - exon, intron, 5'UTR, 3'UTR, promoter",
+        "Variant type": "Variant type - missense, nonsense, frameshift, synonymous, in frame, large deletions or duplications (CNVs)",
+        "Allele type": "If the variant has a functional study: Null = variants that confer less than 10% of wild-type activity in either step of LDLR cycle (expression, binding or uptake); Defective = variants that confer between 10% and 70% of wild-type activity in either step of LDLR cycle (expression, binding or uptake), different thresholds are used for luciferase assays; Normal: variant that confers more than 90% of wild-type activity in all steps of LDLR cycle (expression, binding and uptake). NTD: not possible to determine, for example: Variants that affect splicing cannot be assigned either Null or Defective unless the LDLR cycle has also been studied. Results from heterozgyous patient cells should be interpreted with care.",
+        "ClinVar ID": "Link to ClinVar database for this variant",
+        "ClinGen Allele Registry ID": "Link to ClinGen Allele Registry database for this variant",
+        "FH VCEP evidence codes": "Evidence codes met to reach the ACMG classification of this variant (More details here: https://clinicalgenome.org/affiliation/50004/)",
+        "Date of classification": "Variant classifications are always linked to a date of classification. Newer evidence should be evaluated when reporting this variant",
+        "Curated by": "Who has classified this variant: FH VCEP - FH Variant Curation Expert Panel. PerMedFH - not yet classified at the FH VCEP level, rather classified by the investigators of the PerMedFH project",
+        "studied in PerMedFH?": "Variant studied as part of the PerMedFH project. Please see specific workpackage page for details",
+        "Type of functional study (sample type, assay)": "What type of functional study was performed, which was the sample (heterologous or patient cells) and which assay was used",
+        "Result of functional study": "Result of the functional study - which percentage of wild-type activity does the variant retain",
+        "Authors": "Authors of the publication",
+        "PMID": "Publication detailing the functional studies performed"
     }
 };
+const searchConfig = { searchableFields: ['variant code', 'c.', 'p.'] };
 
+// --- Global variable to hold the fetched data ---
+let geneData = {};
 
 $(document).ready(function() {
-    // --- 1. INITIALIZATION (No changes here) ---
+    // --- 1. FETCH DATA AND INITIALIZE ---
+    console.log("Fetching variant data...");
+    fetch('data.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Data fetched successfully. Initializing application.");
+            geneData = data;
+            initializeApp();
+        })
+        .catch(error => {
+            console.error("Fatal Error: Could not fetch or parse data.json.", error);
+            displayError("Could not load variant data. Please check that 'data.json' exists and is correctly formatted.");
+        });
+});
+
+function initializeApp() {
     const $geneSelector = $('#gene-selector');
     const $variantForm = $('#variant-form');
     const $variantInput = $('#variant-input');
-    const $resultsContainer = $('#results-container');
     
     const genes = Object.keys(geneData).sort();
+    $geneSelector.empty(); // Clear any previous options
     genes.forEach(gene => {
         $geneSelector.append(new Option(gene, gene));
     });
 
-    $geneSelector.select2({
-        theme: "bootstrap-5",
-        width: '100%',
-    });
+    $geneSelector.select2({ theme: "bootstrap-5", width: '100%' });
+    $('body').tooltip({ selector: '[data-bs-toggle="tooltip"]' });
 
-    // --- 2. EVENT HANDLING (No changes here) ---
     $variantForm.on('submit', function(e) {
-        e.preventDefault(); 
-        const selectedGene = $geneSelector.val();
-        const variantId = $variantInput.val(); // We trim and normalize in the search function
-
-        if (!selectedGene || !variantId) {
-            displayError("Please select a gene and enter a variant ID.");
-            return;
-        }
-        searchAndDisplay(selectedGene, variantId);
+        e.preventDefault();
+        searchAndDisplay($geneSelector.val(), $variantInput.val());
     });
 
-    // --- 3. CORE FUNCTIONS (Search logic updated) ---
-    function searchAndDisplay(gene, variantId) {
-        const geneInfo = geneData[gene];
-        if (!geneInfo) {
-            displayNotFound("Gene not found in the database.");
-            return;
-        }
+    $('#results-container').on('click', '.results-summary', function() {
+        $(this).siblings('.results-details').slideToggle('fast');
+        $(this).find('.toggle-icon').toggleClass('expanded');
+    });
+    console.log("Application initialized.");
+}
 
-        // Normalize the search term for a robust, case-insensitive search
-        const searchTerm = variantId.trim().toLowerCase();
-
-        // **NEW: Multi-field search logic**
-        const foundVariant = geneInfo.variants.find(variant => {
-            const idMatch = variant.id?.toLowerCase() === searchTerm;
-            const hgvsMatch = variant.hgvs?.toLowerCase() === searchTerm;
-            const pNotationMatch = variant.p_notation?.toLowerCase() === searchTerm;
-            const aliasMatch = variant.aliases?.some(alias => alias.toLowerCase() === searchTerm);
-
-            return idMatch || hgvsMatch || pNotationMatch || aliasMatch;
-        });
-        
-        if (foundVariant) {
-            displayVariantData(foundVariant, geneInfo);
-        } else {
-            displayNotFound(`Variant '${variantId}' was not found for gene ${gene}.`);
+function* searchGenerator(gene, searchTerm) {
+    const geneInfo = geneData[gene];
+    if (!geneInfo) { yield null; return; }
+    for (const variant of geneInfo.variants) {
+        for (const field of searchConfig.searchableFields) {
+            const value = variant[field];
+            if (value && String(value).toLowerCase() === searchTerm) {
+                yield variant;
+                return;
+            }
         }
     }
-    
-    // --- 4. DISPLAY FUNCTIONS (Minor update to show p. notation) ---
-    function generateStudiesTable(studies) {
-        if (!studies || studies.length === 0) {
-            return '<p class="text-muted mt-4">No functional studies available for this variant.</p>';
-        }
-        const tableHeader = `...`; // Same as before, omitted for brevity
-        const tableRows = studies.map(study => {
-            // ... same as before
-        }).join('');
-        // This function's internal logic is unchanged from the previous version.
-        // Full implementation is in the previous response if needed.
-        return `...`;
+    yield null;
+}
+
+function searchAndDisplay(gene, variantId) {
+    const searchTerm = variantId.trim().toLowerCase();
+    const searchResult = searchGenerator(gene, searchTerm).next().value;
+    if (searchResult) {
+        displayVariantData(searchResult);
+    } else {
+        displayNotFound(`Variant '${variantId}' was not found in gene ${gene}.`);
     }
-    
-    function displayVariantData(variant, gene) {
-        const significanceClass = getSignificanceClass(variant.clinicalSignificance);
-        const vcepCurationBadge = variant.isFhVcepCurated 
-            ? '<span class="badge bg-success">Yes</span>'
-            : '<span class="badge bg-secondary">No</span>';
+}
 
-        const clinvarLink = variant.clinvarId 
-            ? `<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/${variant.clinvarId}/" target="_blank">${variant.clinvarId}</a>`
-            : 'N/A';
+function displayVariantData(variant) {
+    const summaryHtml = displayConfig.summaryFields.map(field => {
+        const value = variant[field.key] || 'N/A';
+        const tooltip = displayConfig.tooltips[field.key] || '';
+        let valueHtml = `<strong>${field.label}:</strong> ${value}`;
+        if (field.key === "ACMG Classification") {
+            const acmgClass = getAcmgHighlightClass(value);
+            valueHtml = `<strong>${field.label}:</strong> <span class="badge ${acmgClass}">${value}</span>`;
+        }
+        return `<div class="summary-item" data-bs-toggle="tooltip" title="${tooltip}">${valueHtml}</div>`;
+    }).join('');
 
-        const studiesTableHtml = generateStudiesTable(variant.functionalStudies); // Function defined in previous response
+    const hiddenDetailsHtml = displayConfig.hiddenFields.map(key => {
+        const tooltip = displayConfig.tooltips[key] || '';
+        if (key === "Curated by FH VCEP?") {
+            const vcepValue = variant[key];
+            if (!vcepValue) return '';
+            const vcepValueLower = String(vcepValue).toLowerCase();
+            const badgeClass = vcepValueLower === 'yes' ? 'bg-success' : 'bg-danger';
+            const icon = vcepValueLower === 'yes' ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shield-fill-check" viewBox="0 0 16 16" style="vertical-align: -0.125em; margin-left: 0.5rem;"><path d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.725 10.725 0 0 0 2.287 2.233c.346.244.652.42.893.533.12.056.255.098.386.123.134.026.275.04.415.04.14 0 .281-.014.415-.04.13-.025.266-.067.386-.123.24-.113.547-.29.893-.533a10.726 10.726 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.5 1 8 1c-.5 0-1.552.29-2.662.59zM10.854 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 8.793l2.646-2.647a.5.5 0 0 1 .708 0z"/></svg>` : '';
+            return generateFieldHtml(key, `<span class="badge ${badgeClass}">${vcepValue}</span>${icon}`, tooltip);
+        }
+        return generateFieldHtml(key, variant[key], tooltip);
+    }).join('');
 
-        const html = `
-            <div class="card shadow-sm results-card">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0">${variant.id} <small class="text-muted">in ${Object.keys(geneData).find(key => geneData[key] === gene)}</small></h3>
-                    <span class="badge ${significanceClass} fs-6">${variant.clinicalSignificance || 'Unknown'}</span>
+    const studiesTableHtml = generateStudiesTable(variant);
+
+    const html = `
+        <div class="card shadow-sm results-card">
+            <div class="card-body p-0">
+                <div class="d-flex justify-content-between align-items-center p-3 results-summary" style="cursor: pointer;" title="Click to expand/collapse">
+                    <div class="d-flex flex-wrap align-items-center summary-container">${summaryHtml}</div>
+                    <div class="text-end"><span class="toggle-icon ms-3">▼</span></div>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h5>Variant Details</h5>
-                            <dl class="row variant-details-list">
-                                <dt class="col-sm-3">Location</dt>
-                                <dd class="col-sm-9">${variant.location || 'N/A'}</dd>
-                                
-                                <dt class="col-sm-3">HGVS (DNA)</dt>
-                                <dd class="col-sm-9"><code>${variant.hgvs || 'N/A'}</code></dd>
-                                
-                                <!-- **NEW: Displaying Protein Notation** -->
-                                <dt class="col-sm-3">HGVS (Protein)</dt>
-                                <dd class="col-sm-9"><code>${variant.p_notation || 'N/A'}</code></dd>
-                                
-                                <dt class="col-sm-3">Variant Type</dt>
-                                <dd class="col-sm-9">${variant.variantType || 'N/A'}</dd>
-
-                                <dt class="col-sm-3">ClinVar ID</dt>
-                                <dd class="col-sm-9">${clinvarLink}</dd>
-
-                                <dt class="col-sm-3">FH VCEP Evidence</dt>
-                                <dd class="col-sm-9">${variant.fhVcepEvidenceCodes || 'N/A'}</dd>
-
-                                <dt class="col-sm-3">Curated by FH VCEP</dt>
-                                <dd class="col-sm-9">${vcepCurationBadge}</dd>
-
-                                <dt class="col-sm-3">Date of Classification</dt>
-                                <dd class="col-sm-9">${variant.classificationDate || 'N/A'}</dd>
-                            </dl>
-                        </div>
-                    </div>
+                <div class="results-details p-3 border-top" style="display: none;">
+                    <h5 class="mb-3">Full Variant Details</h5>
+                    <dl class="row variant-details-list">${hiddenDetailsHtml}</dl>
                     <hr>
                     ${studiesTableHtml}
-                    <hr>
-                    <h5>Gene Context: ${gene.fullName}</h5>
-                    <p class="text-muted">${gene.summary || 'No summary available.'}</p>
                 </div>
             </div>
-        `;
-        $resultsContainer.html(html);
+        </div>`;
+    $('#results-container').html(html);
+}
+
+function getAcmgHighlightClass(acmgValue) {
+    if (!acmgValue) return 'bg-secondary';
+    const lowerAcmgValue = acmgValue.toLowerCase();
+    for (const key in displayConfig.acmgHighlighting) {
+        if (lowerAcmgValue.includes(key)) return displayConfig.acmgHighlighting[key];
     }
-    
-    // Helper functions (getSignificanceClass, displayNotFound, displayError, generateStudiesTable)
-    // are unchanged from the previous version. They are included here for completeness.
-    
-    function generateStudiesTable(studies) {
-        if (!studies || studies.length === 0) return '<p class="text-muted mt-4">No functional studies available for this variant.</p>';
-        const tableHeader = `<thead class="table-light"><tr><th>Type of Functional Study</th><th>Result</th><th>Publication</th></tr></thead>`;
-        const tableRows = studies.map(study => {
-            const pubmedLink = `https://pubmed.ncbi.nlm.nih.gov/${study.pubmedId}/`;
-            const linkText = `${study.author} et al. ${study.year}`;
-            const highlightClass = study.isHighlighted ? 'table-highlight' : '';
-            return `<tr class="${highlightClass}"><td>${study.studyType}</td><td>${study.result}</td><td><a href="${pubmedLink}" target="_blank" rel="noopener noreferrer">${linkText}</a></td></tr>`;
-        }).join('');
-        return `<h5 class="mt-4">Functional Studies</h5><div class="table-responsive"><table class="table table-bordered table-hover studies-table">${tableHeader}<tbody>${tableRows}</tbody></table></div>`;
+    return 'bg-secondary';
+}
+
+function generateFieldHtml(label, value, tooltipText) {
+    const tooltip = tooltipText ? `data-bs-toggle="tooltip" data-bs-placement="top" title="${tooltipText}"` : "";
+    return `<dt class="col-sm-4" ${tooltip}>${label}</dt><dd class="col-sm-8">${value || 'N/A'}</dd>`;
+}
+
+function generateStudiesTable(variant) {
+    const studies = [];
+    let i = 1;
+    const typeKeyBase = displayConfig.studyFields.type;
+    while (variant[`${typeKeyBase}${i}`]) {
+        const study = {};
+        for (const key in displayConfig.studyFields) {
+            study[key] = variant[displayConfig.studyFields[key] + i];
+        }
+        studies.push(study);
+        i++;
     }
 
-    function displayNotFound(message) { const html = `<div class="alert alert-warning text-center" role="alert"><strong>Not Found:</strong> ${message}</div>`; $resultsContainer.html(html); }
-    function displayError(message) { const html = `<div class="alert alert-danger text-center" role="alert"><strong>Error:</strong> ${message}</div>`; $resultsContainer.html(html); }
-    function getSignificanceClass(significance) { if (!significance) return 'bg-secondary'; const lowerCaseSig = significance.toLowerCase(); if (lowerCaseSig === 'pathogenic') return 'bg-danger'; if (lowerCaseSig === 'benign') return 'bg-success'; if (lowerCaseSig.includes('conflicting')) return 'bg-warning text-dark'; return 'bg-secondary'; }
-});
+    if (studies.length === 0) return '<p class="text-muted mt-4">No functional studies available.</p>';
+
+    const header = `<thead><tr><th>${displayConfig.studyFields.type}</th><th>${displayConfig.studyFields.result}</th><th>Publication</th></tr></thead>`;
+    const rows = studies.map(s => {
+        const link = s.pmid ? `<a href="https://pubmed.ncbi.nlm.nih.gov/${s.pmid}/" target="_blank">${s.author || 'Link'}</a>` : 'N/A';
+        return `<tr><td>${s.type || 'N/A'}</td><td>${s.result || 'N/A'}</td><td>${link}</td></tr>`;
+    }).join('');
+
+    return `<h5 class="mt-4">Functional Studies</h5><div class="table-responsive"><table class="table table-bordered">${header}<tbody>${rows}</tbody></table></div>`;
+}
+
+function displayNotFound(message) { $('#results-container').html(`<div class="alert alert-warning">${message}</div>`); }
+function displayError(message) { $('#results-container').html(`<div class="alert alert-danger">${message}</div>`); }

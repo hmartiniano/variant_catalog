@@ -53,3 +53,17 @@ body {
     padding: 0.375rem 0.75rem;
     min-height: calc(1.5em + 0.75rem + 2px);
 }
+
+/* --- NEW: Spacing for summary items --- */
+.summary-item {
+    margin-right: 1.5rem; /* Adds space between items in the summary line */
+    padding: 0.25rem 0; /* Adds a little vertical padding */
+}
+
+.toggle-icon {
+    transition: transform 0.2s ease-in-out;
+}
+
+.toggle-icon.expanded {
+    transform: rotate(180deg);
+}
