@@ -36,7 +36,7 @@ def convert_excel_to_json(input_path, output_path, gene_column="Gene"):
         variant_data = row.to_dict()
         for key, value in variant_data.items():
             if isinstance(value, pd.Timestamp):
-                variant_data[key] = value.isoformat()
+                variant_data[key] = value.strftime('%Y-%m-%d')
         
         if gene_column in variant_data:
             del variant_data[gene_column]
