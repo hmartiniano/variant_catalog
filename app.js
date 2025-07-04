@@ -6,7 +6,6 @@ const N_A = 'N/A';
 // --- DISPLAY CONFIGURATION ---
 const displayConfig = {
     "summaryFields": [
-        "variant code",
         "Gene",
         "c.",
         "p.",
@@ -22,8 +21,7 @@ const displayConfig = {
         "ClinGen Allele Registry ID",
         "FH VCEP evidence codes",
         "Date of classification",
-        "Curated by",
-        "studied in PerMedFH?"
+        "Curated by"
     ],
     "studyFields": {
         "type": "Type of functional study (sample type, assay)",
@@ -62,7 +60,7 @@ const displayConfig = {
         "PMID": "Publication detailing the functional studies performed"
     }
 };
-const searchConfig = { searchableFields: ['variant code', 'c.', 'p.'] };
+const searchConfig = { searchableFields: ['c.', 'p.'] };
 
 // --- Global variable to hold the fetched data ---
 let geneData = {};
@@ -206,7 +204,7 @@ function _generateSummaryHtml(variant) {
  * @returns {string} The HTML string for the hidden details section.
  */
 function _generateHiddenDetailsHtml(variant) {
-    return displayConfig.hiddenFields.map(key => {
+    let html = displayConfig.hiddenFields.map(key => {
         const tooltip = displayConfig.tooltips[key] || '';
         if (key === "Curated by FH VCEP?") {
             const vcepValue = variant[key];
@@ -214,9 +212,19 @@ function _generateHiddenDetailsHtml(variant) {
             const vcepValueLower = String(vcepValue).toLowerCase();
             const badgeClass = vcepValueLower === 'yes' ? BADGE_SUCCESS_CLASS : BADGE_DANGER_CLASS;
             return generateFieldHtml(key, vcepValue, tooltip, badgeClass);
+        } else if (key === "ClinVar ID" && variant[key]) {
+            return generateFieldHtml(key, `<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/${variant[key]}/" target="_blank">${variant[key]}</a>`, tooltip);
+        } else if (key === "ClinGen Allele Registry ID" && variant[key]) {
+            return generateFieldHtml(key, `<a href="https://reg.clinicalgenome.org/allele/${variant[key]}" target="_blank">${variant[key]}</a>`, tooltip);
         }
         return generateFieldHtml(key, variant[key], tooltip);
     }).join('');
+
+    // Handle "studied in PerMedFH?" as an image
+    if (variant["studied in PerMedFH?"] && String(variant["studied in PerMedFH?"]).toLowerCase() === 'yes') {
+        html += generateFieldHtml("Studied in PerMedFH?", '<img src="placeholder.png" alt="Studied in PerMedFH" style="width: 50px; height: 50px;"> ', displayConfig.tooltips["studied in PerMedFH?"]);
+    }
+    return html;
 }
 
 function getAcmgHighlightClass(acmgValue) {
