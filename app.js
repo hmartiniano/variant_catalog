@@ -139,6 +139,7 @@ function searchAndDisplay(gene, variantId) {
     const searchTerm = variantId.trim().toLowerCase();
     const searchResult = searchGenerator(gene, searchTerm).next().value;
     if (searchResult) {
+        searchResult.Gene = gene; // Add the gene name to the variant object
         displayVariantData(searchResult);
     } else {
         displayNotFound(`Variant '${variantId}' was not found in gene ${gene}.`);
