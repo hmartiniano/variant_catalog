@@ -215,7 +215,7 @@ function _generateHiddenDetailsHtml(variant) {
         } else if (key === "ClinVar ID" && variant[key]) {
             return generateFieldHtml(key, `<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/${variant[key]}/" target="_blank">${variant[key]}</a>`, tooltip);
         } else if (key === "ClinGen Allele Registry ID" && variant[key]) {
-            return generateFieldHtml(key, `<a href="https://reg.clinicalgenome.org/allele/${variant[key]}" target="_blank">${variant[key]}</a>`, tooltip);
+            return generateFieldHtml(key, `<a href="https://reg.clinicalgenome.org/redmine/projects/registry/genboree_registry/by_canonicalid?canonicalid=${variant[key]}" target="_blank">${variant[key]}</a>`, tooltip);
         }
         return generateFieldHtml(key, variant[key], tooltip);
     }).join('');
