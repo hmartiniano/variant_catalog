@@ -161,7 +161,7 @@ function displayVariantData(variant) {
             <div class="card-body p-0">
                 <div class="d-flex justify-content-between align-items-center p-3 results-summary" style="cursor: pointer;" title="Click to expand/collapse">
                     <div class="d-flex flex-wrap align-items-center summary-container">${summaryHtml}</div>
-                    <div class="text-end"><span class="toggle-icon ms-3">▼</span></div>
+                    <div class="text-end"><button class="btn btn-sm btn-outline-secondary me-2">Click for more details</button><span class="toggle-icon">▼</span></div>
                 </div>
                 <div class="results-details p-3 border-top" style="display: none;">
                     <h5 class="mb-3">Full Variant Details</h5>
