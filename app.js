@@ -10,7 +10,7 @@ const displayConfig = {
         "c.",
         "p.",
         "Has functional study?",
-        "ACMG Classification",
+        "FH VCEP Classification",
         "Curated by FH VCEP?"
     ].map(key => ({ key: key, label: key })),
     "hiddenFields": [
@@ -43,7 +43,7 @@ const displayConfig = {
         "c.": "Variant at the DNA level",
         "p.": "Variant at protein level",
         "Has functional study?": "Yes - published functional study. Under review - please check back later, as information is being updated. Ongoing - Variant is currently being studied functionally, please come back later for updates.",
-        "ACMG Classification": "Variant classification according to the latest approved ACMG guidelines, with specifications for each gene by the ClinGen FH Variant Curation Expert Panel (More details here: https://clinicalgenome.org/affiliation/50004/)",
+        "FH VCEP Classification": "Variant classification according to the latest approved ACMG guidelines, with specifications for each gene by the ClinGen FH Variant Curation Expert Panel (More details here: https://clinicalgenome.org/affiliation/50004/)",
         "Curated by FH VCEP?": "If the variant was classified by the ClinGen FH VCEP (https://clinicalgenome.org/affiliation/50004/)",
         "Location": "Location in the gene - exon, intron, 5'UTR, 3'UTR, promoter",
         "Variant type": "Variant type - missense, nonsense, frameshift, synonymous, in frame, large deletions or duplications (CNVs)",
@@ -184,7 +184,7 @@ function _generateSummaryHtml(variant) {
         const tooltip = displayConfig.tooltips[field.key] || '';
         let valueHtml = `<strong>${field.label}:</strong> ${value}`;
 
-        if (field.key === "ACMG Classification") {
+        if (field.key === "FH VCEP Classification") {
             const acmgClass = getAcmgHighlightClass(value);
             valueHtml = `<strong>${field.label}:</strong> <span class="badge ${acmgClass}">${value}</span>`;
         } else if (field.key === "Curated by FH VCEP?") {
