@@ -69,32 +69,26 @@ body {
     transform: rotate(180deg);
 }
 
-/* ACMG Classification Highlighting */
+/* Variant Classification Highlighting */
 .acmg-pathogenic {
-    background-color: #dc3545;
-    color: white;
+  background-color: #d9534f !important;
 }
 
 .acmg-likely-pathogenic {
-    background-color: #dc3545;
-    opacity: 0.75;
-    color: white;
-}
-
-.acmg-vus {
-    background-color: #ffc107;
-    color: black;
+  background-color: #f0ad4e !important;
 }
 
 .acmg-likely-benign {
-    background-color: #198754;
-    opacity: 0.75;
-    color: white;
+  background-color: #a6d96a !important;
+}
+
+.acmg-vus {
+  background-color: #5bc0de !important;
+  color: black;
 }
 
 .acmg-benign {
-    background-color: #198754;
-    color: white;
+  background-color: #1a9641 !important;
 }
 
 .acmg-conflicting {
