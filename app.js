@@ -20,6 +20,7 @@ const displayConfig = {
         "ClinVar ID",
         "ClinGen Allele Registry ID",
         "FH VCEP evidence codes",
+        "Guideline version",
         "Date of classification",
         "Curated by"
     ],
@@ -217,6 +218,9 @@ function _generateHiddenDetailsHtml(variant) {
             return generateFieldHtml(key, `<a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/${variant[key]}/" target="_blank">${variant[key]}</a>`, tooltip);
         } else if (key === "ClinGen Allele Registry ID" && variant[key]) {
             return generateFieldHtml(key, `<a href="https://reg.clinicalgenome.org/redmine/projects/registry/genboree_registry/by_canonicalid?canonicalid=${variant[key]}" target="_blank">${variant[key]}</a>`, tooltip);
+        } else if (key === "Guideline version" && variant[key]) {
+            const link = variant["link"] || "#"; // Assuming 'link' column holds the URL
+            return generateFieldHtml(key, `<a href="${link}" target="_blank">${variant[key]}</a>`, tooltip);
         }
         return generateFieldHtml(key, variant[key], tooltip);
     }).join('');
