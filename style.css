@@ -61,15 +61,6 @@ body {
     padding: 0.25rem 0; /* Adds a little vertical padding */
 }
 
-.toggle-icon {
-    transition: transform 0.2s ease-in-out;
-    margin-left: 0.5rem; /* Adjust margin to align with button */
-}
-
-.toggle-icon.expanded {
-    transform: rotate(180deg);
-}
-
 /* Style for the "Click for more details" button */
 .results-summary .btn {
     padding: 0.25rem 0.5rem; /* Smaller padding for a less prominent button */

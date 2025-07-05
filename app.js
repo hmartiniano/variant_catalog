@@ -98,8 +98,15 @@ $(document).ready(function() {
             });
 
             $('#results-container').on('click', '.results-summary', function() {
-                $(this).siblings('.results-details').slideToggle('fast');
-                $(this).find('.toggle-icon').toggleClass('expanded');
+                const $details = $(this).siblings('.results-details');
+                const $button = $(this).find('#toggle-details-btn');
+                $details.slideToggle('fast', function() {
+                    if ($details.is(':visible')) {
+                        $button.text('Click to hide details');
+                    } else {
+                        $button.text('Click for more details');
+                    }
+                });
             });
             console.log("Application initialized.");
         })
@@ -161,7 +168,7 @@ function displayVariantData(variant) {
             <div class="card-body p-0">
                 <div class="d-flex justify-content-between align-items-center p-3 results-summary" style="cursor: pointer;" title="Click to expand/collapse">
                     <div class="d-flex flex-wrap align-items-center summary-container">${summaryHtml}</div>
-                    <div class="text-end"><button class="btn btn-sm btn-outline-secondary me-2">Click for more details</button><span class="toggle-icon">▼</span></div>
+                    <div class="text-end"><button id="toggle-details-btn" class="btn btn-sm btn-outline-secondary me-2">Click for more details</button></div>
                 </div>
                 <div class="results-details p-3 border-top" style="display: none;">
                     <h5 class="mb-3">Full Variant Details</h5>
